@@ -1,62 +1,88 @@
 'use strict';
 
-const movieDB = {
-    movies: [
-        "Логан",
-        "Ліга Справедливості",
-        "Ла-ла ленд",
-        "Одержимість",
-        "Скотт Пілігрим проти..."
-    ]
-};
-
-const adv = document.querySelectorAll('.promo__adv img'),
-      poster = document.querySelector('.promo__bg'),
-      genre = poster.querySelector('.promo__genre'),
-      movieList = document.querySelector('.promo__interactive-list'),
-      title = document.querySelector('.promo__interactive-title');
-
-
-adv.forEach(item => {
-    item.remove();
-});
-
-genre.textContent = 'драма';
-
-poster.style.backgroundImage = 'url("img/bg.jpg")';
-
-movieList.innerHTML = "";
-
-movieDB.movies.sort();
-
-movieDB.movies.forEach((film, i) => {
-    movieList.innerHTML += `
-        <li class="promo__interactive-item">${i + 1} ${film}
-            <div class="delete"></div>
-        </li>
-    `;
-});
-
-const btn = document.querySelectorAll('.promo__menu-item');
-
-btn[0].addEventListener('click', () => {
-    alert('Click');
-});
-
-// const showElement = (e) => {
-//     console.log(e.target);
-// };
-
-
-let i = 0;
-const showElement = (e) => {
-    console.log(e.target);
+document.addEventListener('DOMContentLoaded', () => {
+    const movieDB = {
+        movies: [
+            "Логан",
+            "Ліга Справедливості",
+            "Ла-ла ленд",
+            "Одержимість",
+            "Скотт Пілігрим проти..."
+        ]
+    };
     
-    i++;
+    const adv = document.querySelectorAll('.promo__adv img'),
+          poster = document.querySelector('.promo__bg'),
+          genre = poster.querySelector('.promo__genre'),
+          movieList = document.querySelector('.promo__interactive-list'),
+          addForm = document.querySelector('form.add'),
+          addInput = addForm.querySelector('.adding__input'),
+          checkbox = addForm.querySelector(' [type="checkbox"] ');
 
-    if (i == 1) {
-        btn[1].removeEventListener('click', showElement);
+    addForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+
+        let newFilm = addInput.value;
+        const favorite = checkbox.checked;
+
+        if (newFilm) {
+            if (newFilm.length > 21) {
+                newFilm = `${newFilm.substring(0, 22)}...`;
+            }
+
+            if (favorite) {
+                console.log('Додаємо улюблений фільм');
+            }
+
+            movieDB.movies.push(newFilm);
+            sortArr(movieDB.movies);
+    
+            createMovieList(movieDB.movies, movieList);
+        }
+
+        event.target.reset();
+    });
+    
+    const deleteAdv = (arr) => {
+        arr.forEach(item => {
+            item.remove();
+        });
+    };
+   
+    const makeChanges = () => {
+        genre.textContent = 'драма';
+        poster.style.backgroundImage = 'url("img/bg.jpg")';
+    };
+
+    const sortArr = (arr) => {
+        arr.sort();
+    };
+
+    function createMovieList(films, parent) {
+        parent.innerHTML = "";
+    
+        sortArr(films);
+
+        films.forEach((film, i) => {
+            parent.innerHTML += `
+                <li class="promo__interactive-item">${i + 1} ${film}
+                    <div class="delete"></div>
+                </li>
+            `;
+        });
+
+        document.querySelectorAll('.delete').forEach((btn, i) => {
+            btn.addEventListener('click', () => {
+                btn.parentElement.remove();
+                movieDB.movies.splice(i, 1);
+
+                createMovieList(films, parent);
+
+            });
+        });
     }
-};
 
-btn[1].addEventListener('click', showElement);
+    deleteAdv(adv);
+    makeChanges();
+    createMovieList(movieDB.movies, movieList);
+});
