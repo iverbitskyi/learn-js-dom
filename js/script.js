@@ -36,3 +36,27 @@ movieDB.movies.forEach((film, i) => {
         </li>
     `;
 });
+
+const btn = document.querySelectorAll('.promo__menu-item');
+
+btn[0].addEventListener('click', () => {
+    alert('Click');
+});
+
+// const showElement = (e) => {
+//     console.log(e.target);
+// };
+
+
+let i = 0;
+const showElement = (e) => {
+    console.log(e.target);
+    
+    i++;
+
+    if (i == 1) {
+        btn[1].removeEventListener('click', showElement);
+    }
+};
+
+btn[1].addEventListener('click', showElement);
